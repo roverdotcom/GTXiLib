@@ -34,6 +34,9 @@ Pod::Spec.new do |s|
     sp.libraries = "c++"
     sp.dependency "abseil"
     sp.dependency "tinyxml"
+    # Fix for use_frameworks!: Add Pods directory to header search paths
+    # so <abseil/absl/...> headers can be resolved correctly
+    sp.pod_target_xcconfig = { 'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}"' }
   end
   s.subspec "XCTestLib" do |sp|
     sp.source_files = "Classes/XCTest/*.{h,m,swift,mm,cc}"

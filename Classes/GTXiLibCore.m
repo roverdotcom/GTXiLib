@@ -26,8 +26,8 @@
 
 #pragma mark - Global definitions.
 
-double gGTXiLibVersionNumber = 4.0;
-const unsigned char GTXiLibVersionString[] = "4.0";
+static double gGTXiLibVersionNumber = 4.0;
+static const unsigned char GTXiLibVersionString[] = "4.0";
 
 NSString *const gtxTestCaseDidBeginNotification = @"gtxTestCaseDidBeginNotification";
 NSString *const gtxTestCaseDidEndNotification = @"gtxTestCaseDidEndNotification";

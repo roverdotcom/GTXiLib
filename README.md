@@ -1,5 +1,75 @@
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
+## Rover Fork - use_frameworks! Support
+
+> **Note:** This is a Rover.com fork of GTXiLib that adds support for `use_frameworks!` in CocoaPods.
+>
+> The official GTXiLib does not support `use_frameworks!` due to incompatibilities with its Abseil dependency. However, React Native projects require `use_frameworks!`, so this fork includes the necessary patches to make GTXiLib work in that environment.
+
+### What Was Fixed
+
+This fork addresses three compilation/linking issues that occur when using GTXiLib with `use_frameworks!`:
+
+1. **Abseil header path resolution** ([GTXiLib.podspec](GTXiLib.podspec#L37-L39))
+   - Added `HEADER_SEARCH_PATHS` configuration to the GTXOOPLib subspec
+   - Fixes: `'abseil/absl/strings/str_cat.h' file not found` error in `OOPClasses/xml_utils.cc:19`
+
+2. **Objective-C++ typeof() syntax** ([Classes/GTXToolKit.mm:107](Classes/GTXToolKit.mm#L107))
+   - Changed `typeof(self)` to `__typeof__(self)` for C++ compatibility
+   - Fixes: `expected unqualified-id` compilation error
+
+3. **Duplicate version symbols** ([Classes/GTXiLibCore.m:29-30](Classes/GTXiLibCore.m#L29-L30))
+   - Made version symbols `static` to avoid conflicts with Xcode auto-generated framework symbols
+   - Fixes: `duplicate symbol '_GTXiLibVersionString'` linker error
+
+### Installation
+
+#### Using with GSCXScanner (Recommended)
+
+If you're using GSCXScanner (which depends on GTXiLib), add both to your Podfile:
+
+```ruby
+use_frameworks!  # Required for React Native projects
+
+target 'YourApp' do
+  # Your other pods...
+
+  pod 'GTXiLib', :git => 'https://github.com/roverdotcom/GTXiLib.git', :branch => 'use-frameworks-fix'
+  pod 'GSCXScanner', '4.0.2'
+end
+```
+
+**Important:** Specify GTXiLib *before* GSCXScanner to ensure CocoaPods uses your forked version instead of the official one.
+
+#### Using GTXiLib Directly
+
+For projects that use GTXiLib directly without GSCXScanner:
+
+```ruby
+use_frameworks!  # This fork enables use_frameworks! support
+
+target 'YourApp' do
+  pod 'GTXiLib', :git => 'https://github.com/roverdotcom/GTXiLib.git', :branch => 'use-frameworks-fix'
+end
+```
+
+After updating your Podfile, run:
+
+```bash
+pod install
+```
+
+### Upstream Status
+
+These fixes have been implemented in this fork because:
+- The official GTXiLib explicitly does not support `use_frameworks!`
+- Related issues ([#24](https://github.com/google/GTXiLib/issues/24)) have been open since 2022 with no resolution
+- No active maintenance appears to be happening on the upstream repository
+
+If Google releases an official version with `use_frameworks!` support, this fork can be retired.
+
+---
+
 ## What is GTXiLib?
 GTXiLib, Google Toolbox for Accessibility for the iOS platform or simply GTX-eye
 is a framework for iOS accessibility testing. GTXiLib has XCTest integration and
